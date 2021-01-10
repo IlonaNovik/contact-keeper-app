@@ -15,25 +15,28 @@ const axiosInstance = () => {
     })
 
     axiosInstance.interceptors.response.use(
-        (response) => new Promise((resolve, reject) => {
-            resolve(response)
-        }), (error) => {
+        (response) =>
+            new Promise((resolve, reject) => {
+                resolve(response);
+            }),
+        (error) => {
             if (!error.response) {
                 return new Promise((resolve, reject) => {
-                    reject(error.response)
-                })
-            }
-            if (!error.response.status === 403) {
-                localStorage.removeItem("token")
-            } else {
-                return new Promise((resolve, reject) => {
-                    reject(error.response)
-                })
+                    reject(error);
+                });
             }
 
-            window.location = '/login'
+            if (error.response.status === 403) {
+                localStorage.removeItem("token");
+                window.location = "/login";
+            } else {
+                return new Promise((resolve, reject) => {
+                    reject(error);
+                });
+            }
         }
-    )
+    );
+
     return axiosInstance;
 }
 
